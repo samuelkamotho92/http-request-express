@@ -1,6 +1,23 @@
 const fs = require("fs");
 //outliside the loop call
 const tours = JSON.parse(fs.readFileSync("./starter/dev-data/data/tours-simple.json","utf-8"));
+
+const paramid = (req,res,next,value)=>{
+    console.log(`id:${value}`);
+    const id = req.params.id*1;
+    const tour = tours.find(el=> el.id === id);
+    if (id > tours.length) {
+        if (!tour) {
+            //exit the function
+        return res.status(404).json({
+            status:"fail",
+            message:"OOPS PAGE NOT FOUND!!"
+        });
+    }
+    }
+    next();
+}
+
 const getTours = (req,res)=>{
     //json specification
 res.status(200).json({
@@ -19,15 +36,6 @@ const getatour = (req,res)=>{
     //convert into a number
     const id = req.params.id*1;
     const tour = tours.find(el=> el.id === id);
-    if (id > tours.length) {
-        if (!tour) {
-            //exit the function
-        return res.status(404).json({
-            status:"fail",
-            message:"OOPS PAGE NOT FOUND!!"
-        });
-    }
-    }
     //json specification
 res.status(200).json({
     status:"succes",
@@ -54,13 +62,7 @@ const createTour = (req,resp)=>{
     })
     }
     const updateTour = (req,resp)=>{
-        const id = req.params.id*1;
-        if (id>tours.length) {
-            return resp.status(404).json({
-                status:"fail",
-                message:"INVALID"
-            })
-        }
+      
         resp.status(200).json({
             status:"success",
             data:{
@@ -69,13 +71,7 @@ const createTour = (req,resp)=>{
         })
     }
     const deleteTour = (req,resp)=>{
-        const id = req.params.id*1;
-        if (id>tours.length) {
-            return resp.status(404).json({
-                status:"fail",
-                message:"INVALID"
-            })
-        }
+       
         resp.status(204).json({
             status:"success",
             data:null
@@ -87,5 +83,6 @@ module.exports = {
 getatour,
 createTour,
 updateTour,
-deleteTour
+deleteTour,
+paramid
 }
